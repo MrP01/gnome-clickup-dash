@@ -1,4 +1,4 @@
-from typing import List, Dict, Any
+from typing import List, Optional
 
 from fastapi import FastAPI
 from pydantic import BaseModel
@@ -17,7 +17,7 @@ class HistoryItem(BaseModel):
     field: str
     parent_id: str
     data: HistoryItemData
-    source: str
+    source: Optional[str]
     user: dict
     before: dict
     after: dict
@@ -27,10 +27,10 @@ class WebhookUpdate(BaseModel):
     webhook_id: str
     event: str
     task_id: str
-    history_item: List[HistoryItem]
+    history_items: List[HistoryItem]
 
 
 @app.post("/handle-task-status-update")
-async def handleTaskStatusUpdate(request: Dict[Any, Any]):
-    print(request)
+async def handleTaskStatusUpdate(update: WebhookUpdate):
+    print(update, update.dict())
     return {"message": "thanks!"}
