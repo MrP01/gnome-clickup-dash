@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
-import requests
 import datetime
 import json
 import os
 import sys
+
+import requests
 
 with open(os.path.expanduser("~/.config/gnome-clickup-dash/clickup.config.json")) as f:
     config = json.load(f)
@@ -46,11 +47,12 @@ def fetch():
             print(f"{task['name'][:30]} | iconName=object-select-symbolic href={task['url']}")
 
 
-try:
-    fetch()
-except ConnectionError:
-    print("No Network")
+if __name__ == '__main__':
+    try:
+        fetch()
+    except ConnectionError:
+        print("No Network")
 
-print("---")
-print("Open Clickup | href=https://app.clickup.com/")
-print(f"Refresh (last: {datetime.datetime.now():%H:%M}) | refresh=true")
+    print("---")
+    print("Open Clickup | href=https://app.clickup.com/")
+    print(f"Refresh (last: {datetime.datetime.now():%H:%M}) | refresh=true")

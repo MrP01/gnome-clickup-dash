@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Dict, Any
 
 from fastapi import FastAPI
 from pydantic import BaseModel
@@ -31,6 +31,6 @@ class WebhookUpdate(BaseModel):
 
 
 @app.post("/handle-task-status-update")
-async def handleTaskStatusUpdate(update: WebhookUpdate):
-    print(update)
+async def handleTaskStatusUpdate(request: Dict[Any, Any]):
+    print(request)
     return {"message": "thanks!"}
