@@ -31,9 +31,11 @@ async def handleTaskStatusUpdate(update: WebhookUpdate):
                     task_name=taskDetail["name"],
                     username=user.username
                 )
-                effortFields = [cf for cf in taskDetail["custom_fields"] if cf["name"] == "Effort"]
-                if effortFields:
-                    task.effort = float(effortFields[0]["options"][effortFields[0]["value"]]["name"])
+                try:
+                    effortField = [cf for cf in taskDetail["custom_fields"] if cf["name"] == "Effort"][0]
+                    task.effort = float(effortField["type_config"]["options"][effortField["value"]]["name"])
+                except (KeyError, ValueError):
+                    print("Effort field could not be parsed.")
                 await db.completedTasks.insert_one(task.dict())
             else:
                 print("The status is not closed. Ignoring :)", historyItem.after)
