@@ -15,7 +15,7 @@ class CompletedTaskLog(BaseModel):
     timestamp: datetime.datetime
     task_id: str
     task_name: str
-    effort: float = 1.0
+    points: float = 1.0
     username: str
 
 

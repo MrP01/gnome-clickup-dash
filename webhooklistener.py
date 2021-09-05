@@ -33,7 +33,7 @@ async def handleTaskStatusUpdate(update: WebhookUpdate):
                 )
                 try:
                     effortField = [cf for cf in taskDetail["custom_fields"] if cf["name"] == "Effort"][0]
-                    task.effort = float(effortField["type_config"]["options"][effortField["value"]]["name"])
+                    task.points = float(effortField["type_config"]["options"][effortField["value"]]["name"])
                 except (KeyError, ValueError):
                     print("Effort field could not be parsed.")
                 await db.completedTasks.insert_one(task.dict())
