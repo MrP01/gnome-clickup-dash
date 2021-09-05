@@ -28,8 +28,8 @@ def fetch():
     completed_tasks = requests.get(
         "https://clickup-task-aggregator.herokuapp.com/get-completed",
         headers={"Authorization": config["task_aggregator_api_token"]},
-        params={"start": (now - datetime.timedelta(weeks=1)).isoformat(), "to": now.isoformat()}
-    )
+        params={"start": (now - datetime.timedelta(weeks=1)).isoformat(), "end": now.isoformat()}
+    ).json()
     print(completed_tasks)
 
     completed = len(completed_tasks)
