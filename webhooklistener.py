@@ -1,9 +1,12 @@
+import os
 from typing import List, Optional
 
+import motor.motor_asyncio
 from fastapi import FastAPI
 from pydantic import BaseModel
 
 app = FastAPI()
+client = motor.motor_asyncio.AsyncIOMotorClient(os.environ["MONGO_URL"])
 
 
 class HistoryItemData(BaseModel):
