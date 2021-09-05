@@ -2,3 +2,4 @@ requests==2.26.0
 fastapi==0.68.1
 uvicorn==0.15.0
 motor==2.5.1
+dnspython==2.1.0
