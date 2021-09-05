@@ -4,11 +4,19 @@ from typing import Optional, List
 from pydantic import BaseModel
 
 
+class User(BaseModel):
+    username: str
+    auth_token: str
+    clickup_email: str
+    clickup_api_token: str
+
+
 class CompletedTaskLog(BaseModel):
     timestamp: datetime.datetime
     task_id: str
     task_name: str
-    effort: float
+    effort: float = 1.0
+    username: str
 
 
 class HistoryItemData(BaseModel):

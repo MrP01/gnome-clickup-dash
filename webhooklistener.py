@@ -1,7 +1,9 @@
 import os
 
 import motor.motor_asyncio
-from fastapi import FastAPI
+import requests
+from fastapi import FastAPI, Depends
+from starlette.requests import Request
 
 from models import *
 
@@ -15,22 +17,38 @@ async def handleTaskStatusUpdate(update: WebhookUpdate):
     print(update)
     if update.event == "taskStatusUpdated":
         for historyItem in update.history_items:
+            user = User.parse_obj(await db.users.find_one({"clickup_email": historyItem.user["email"]}))
+            if user is None:
+                print("Couldn't find the associated user.")
+                return {"message": "could not find user :("}
             if historyItem.after["type"] == "closed":
-                await db.completedTasks.insert_one(CompletedTaskLog(
+                response = requests.get(f"https://api.clickup.com/api/v2/task/{update.task_id}/", headers={"Authorization": user.clickup_api_token})
+                assert response.ok
+                taskDetail = response.json()
+                task = CompletedTaskLog(
                     timestamp=historyItem.get_datetime(),
                     task_id=update.task_id,
-                    task_name="Todo",
-                    effort=1
-                ).dict())
+                    task_name=taskDetail,
+                    username=user.username
+                )
+                effortFields = [cf for cf in taskDetail["custom_fields"] if cf["name"] == "Effort"]
+                if effortFields:
+                    task.effort = float(effortFields[0]["options"][effortFields[0]["value"]]["name"])
+                await db.completedTasks.insert_one(task.dict())
             else:
                 print("The status is not closed. Ignoring :)", historyItem.after)
     else:
-        print("This is not what we are looking for.")
+        print("This is not what we are looking for.", update.event)
     return {"message": "thanks!"}  # what we send back to Clickup is not relevant
 
 
+async def get_current_user(request: Request):
+    return await db.users.find_one({"auth_token": request.headers["Authorization"]})
+
+
 @app.get("/get-completed")
-async def getCompletedTasks(start: datetime.datetime, to: datetime.datetime):
+async def getCompletedTasks(start: datetime.datetime, to: datetime.datetime, user: Depends(get_current_user)) -> list:
     return await db.completedTasks.find({
-        "timestamp": {"$gte": start, "$lt": to}
+        "timestamp": {"$gte": start, "$lt": to},
+        "username": user.username
     })
