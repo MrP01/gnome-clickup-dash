@@ -42,12 +42,13 @@ async def handleTaskStatusUpdate(update: WebhookUpdate):
     return {"message": "thanks!"}  # what we send back to Clickup is not relevant
 
 
-async def get_current_user(request: Request):
-    return await db.users.find_one({"auth_token": request.headers["Authorization"]})
+async def get_current_user(request: Request) -> User:
+    user = await db.users.find_one({"auth_token": request.headers["Authorization"]})
+    return User.parse_obj(user)
 
 
 @app.get("/get-completed")
-async def getCompletedTasks(start: datetime.datetime, to: datetime.datetime, user: Depends(get_current_user)) -> list:
+async def getCompletedTasks(start: datetime.datetime, to: datetime.datetime, user: User = Depends(get_current_user)) -> list:
     return await db.completedTasks.find({
         "timestamp": {"$gte": start, "$lt": to},
         "username": user.username
