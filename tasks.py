@@ -5,13 +5,15 @@ import requests
 
 import clickup
 
-webhook = {"endpoint": "https://clickup-task-aggregator.herokuapp.com/handle-task-status-update",
-           "events": ["taskStatusUpdated", "keyResultDeleted"],  # ClickUp's API doesn't accept just one (bug)
-           "status": "active"}
+webhook = {
+    "endpoint": "https://clickup-task-aggregator.herokuapp.com/handle-task-status-update",
+    "events": ["taskStatusUpdated", "keyResultDeleted"],  # ClickUp's API doesn't accept just one (bug)
+    "status": "active"
+}
 
 
 @invoke.task
-def install_webhook(ctx, team_id=None):
+def install_webhook(ctx, team_id):
     response = requests.post(
         f"https://api.clickup.com/api/v2/team/{team_id}/webhook",
         headers={"Authorization": clickup.config["api_token"]},

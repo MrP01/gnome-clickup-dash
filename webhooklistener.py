@@ -21,7 +21,7 @@ async def handleTaskStatusUpdate(update: WebhookUpdate):
                     task_id=update.task_id,
                     task_name="Todo",
                     effort=1
-                ))
+                ).dict())
             else:
                 print("The status is not closed. Ignoring :)", historyItem.after)
     else:
