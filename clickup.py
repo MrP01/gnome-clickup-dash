@@ -25,25 +25,30 @@ def fetch():
             sys.exit(1)
 
     now = datetime.datetime.utcnow()
-    completed_tasks = requests.get(
+    response = requests.get(
         "https://clickup-task-aggregator.herokuapp.com/get-completed",
         headers={"Authorization": config["task_aggregator_api_token"]},
         params={"start": (now - datetime.timedelta(weeks=1)).isoformat(), "end": now.isoformat()}
-    ).json()
-    print(completed_tasks)
+    )
+    assert response.ok
+    completed_tasks = response.json()
 
     completed = len(completed_tasks)
     due = len(due_tasks)
     emoji = "sunglasses" if completed >= config["task_goal"] else "runner"
     print(f"{completed} / {config['task_goal']}, <span color='lightblue'>due: {due}</span> :{emoji}: | iconName=object-select-symbolic")
     print("---")
-    termplot.plot([0, 1, 2, 3], plot_height=3)
+    termplot.plot([0, 1, 2, 3, 2, 1, 2, 3, 0, 2, 1, 2], plot_height=3)
     if due > 0:
-        for task in due_tasks:
+        print("---")
+        for task in due_tasks[:6]:
             print(f"{task['name'][:30]} | iconName=mail-forward-symbolic href={task['url']}")
-    # if completed > 0:
-    #     for task in completed_tasks:
-    #         print(f"{task['name'][:30]} | iconName=object-select-symbolic href={task['url']}")
+        if due > 6:
+            print(f"... and {due - 6} more")
+    if completed > 0:
+        print("---")
+        for task in completed_tasks:
+            print(f"{task['task_name'][:30]} | iconName=object-select-symbolic href=https://app.clickup.com/t/{task['task_id']}")
 
 
 if __name__ == '__main__':
