@@ -50,8 +50,8 @@ async def get_current_user(request: Request) -> User:
 
 
 @app.get("/get-completed")
-async def getCompletedTasks(start: datetime.datetime, to: datetime.datetime, user: User = Depends(get_current_user)) -> list:
+async def getCompletedTasks(start: datetime.datetime, end: datetime.datetime, user: User = Depends(get_current_user)) -> list:
     return await db.completedTasks.find({
-        "timestamp": {"$gte": start, "$lt": to},
+        "timestamp": {"$gte": start, "$lt": end},
         "username": user.username
-    })
+    }).to_list(500)
