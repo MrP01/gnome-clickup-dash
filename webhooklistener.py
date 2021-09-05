@@ -28,7 +28,7 @@ async def handleTaskStatusUpdate(update: WebhookUpdate):
                 task = CompletedTaskLog(
                     timestamp=historyItem.get_datetime(),
                     task_id=update.task_id,
-                    task_name=taskDetail,
+                    task_name=taskDetail["name"],
                     username=user.username
                 )
                 effortFields = [cf for cf in taskDetail["custom_fields"] if cf["name"] == "Effort"]
