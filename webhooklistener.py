@@ -2,7 +2,7 @@ import os
 
 import motor.motor_asyncio
 import requests
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI, Depends, HTTPException
 from starlette.requests import Request
 
 from models import *
@@ -46,6 +46,8 @@ async def handleTaskStatusUpdate(update: WebhookUpdate):
 
 async def get_current_user(request: Request) -> User:
     user = await db.users.find_one({"auth_token": request.headers["Authorization"]})
+    if user is None:
+        raise HTTPException(status_code=403, detail="Invalid Authorization")
     return User.parse_obj(user)
 
 
