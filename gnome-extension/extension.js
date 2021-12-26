@@ -18,17 +18,35 @@
 
 /* exported init */
 
-const GETTEXT_DOMAIN = "my-indicator-extension";
-
-const { GObject, St } = imports.gi;
-
-const Gettext = imports.gettext.domain(GETTEXT_DOMAIN);
-const _ = Gettext.gettext;
-
+const { GObject, St, Clutter } = imports.gi;
 const ExtensionUtils = imports.misc.extensionUtils;
 const Main = imports.ui.main;
 const PanelMenu = imports.ui.panelMenu;
 const PopupMenu = imports.ui.popupMenu;
+
+const GETTEXT_DOMAIN = "gnome-clickup-dash";
+const Gettext = imports.gettext.domain(GETTEXT_DOMAIN);
+const _ = Gettext.gettext;
+
+const Chart = GObject.registerClass(
+  class Chart extends St.DrawingArea {
+    _init() {
+      super._init();
+      log("The Chart is initialized! :)");
+
+      this.draw();
+    }
+
+    draw() {
+      // Paint background
+      let ctx = this.get_context();
+      let backgroundColor = new Clutter.Color({ red: 45, green: 45, blue: 45, alpha: 255 });
+      Clutter.cairo_set_source_color(ctx, backgroundColor);
+      ctx.rectangle(0, 0, width, height);
+      ctx.fill();
+    }
+  }
+);
 
 const Indicator = GObject.registerClass(
   class Indicator extends PanelMenu.Button {
@@ -50,6 +68,11 @@ const Indicator = GObject.registerClass(
         Main.notify(_("What's up, folks?"));
       });
       this.menu.addMenuItem(item);
+
+      this.chart = new Chart();
+      let item2 = new PopupMenu.PopupBaseMenuItem(); // is a BoxLayout itself
+      item2.add_child(this.chart);
+      this.menu.addMenuItem(item2);
     }
   }
 );
