@@ -1,8 +1,0 @@
-{
-  "name": "ClickUp Task Aggregator",
-  "description": "Display today's task progress, goals and history",
-  "uuid": "clickup-task-bar@gnome-extensions.waldert.at",
-  "shell-version": [
-    "40"
-  ]
-}
