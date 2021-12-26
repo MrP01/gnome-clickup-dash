@@ -3,17 +3,18 @@ import datetime
 import json
 import os
 import sys
+import logging
 
 import pytz
 import requests
 
 import models
 
-with open(os.path.expanduser("~/.config/gnome-clickup-dash/clickup.config.json")) as f:
-    config = json.load(f)
-
+logging.basicConfig(filename="/tmp/gnome-clickup-dash.log")
 OFFSET_INTO_NEW_DAY = datetime.timedelta(hours=4, minutes=30)
 DAYS_BACK = 10
+with open(os.path.expanduser("~/.config/gnome-clickup-dash/clickup.config.json")) as f:
+    config = json.load(f)
 
 
 def points_to_string(points: float):
@@ -27,11 +28,10 @@ def fetch():
             f"https://api.clickup.com/api/v2/view/{workspace['still_due_view_id']}/task",
             headers={"Authorization": config["api_token"]}, data={"page": 0}
         )
-        print(".. Workspace requested", file=sys.stderr)
         if response.ok:
             due_tasks.extend(response.json()["tasks"])
         else:
-            print("ClickUp error")
+            logging.error("Invalid response received", response.status_code)
             sys.exit(1)
 
     start_day = datetime.date.today() - datetime.timedelta(days=DAYS_BACK)
@@ -41,7 +41,7 @@ def fetch():
         headers={"Authorization": config["task_aggregator_api_token"]},
         params={"start": (start_day_time + OFFSET_INTO_NEW_DAY).isoformat(), "end": datetime.datetime.utcnow().isoformat()}
     )
-    print(".. aggregated tasks", file=sys.stderr)
+    # print("... aggregated tasks", file=sys.stderr)
     assert response.ok
     completed_tasks = response.json()
 
@@ -82,6 +82,7 @@ if __name__ == '__main__':
         fetch()
     except ConnectionError:
         print("No Network")
+        logging.exception("Connection Error")
 
     print("---")
     print("Open Clickup | href=https://app.clickup.com/")
