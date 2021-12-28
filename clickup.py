@@ -11,6 +11,7 @@ import requests
 import models
 
 logging.basicConfig(filename="/tmp/gnome-clickup-dash.log")
+logging.info("Starting")
 OFFSET_INTO_NEW_DAY = datetime.timedelta(hours=4, minutes=30)
 DAYS_BACK = 10
 with open(os.path.expanduser("~/.config/gnome-clickup-dash/clickup.config.json")) as f:
@@ -84,6 +85,8 @@ if __name__ == '__main__':
         print("No Network")
         logging.exception("Connection Error")
 
+    logging.info("Finished")
     print("---")
     print("Open Clickup | href=https://app.clickup.com/")
     print(f"Refresh (last: {datetime.datetime.now():%H:%M}) | refresh=true")
+
