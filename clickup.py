@@ -10,7 +10,7 @@ import requests
 
 import models
 
-logging.basicConfig(filename="/tmp/gnome-clickup-dash.log")
+logging.basicConfig(filename="/tmp/gnome-clickup-dash.log", level=logging.DEBUG)
 logging.info("Starting")
 OFFSET_INTO_NEW_DAY = datetime.timedelta(hours=4, minutes=30)
 DAYS_BACK = 10
@@ -32,7 +32,7 @@ def fetch():
         if response.ok:
             due_tasks.extend(response.json()["tasks"])
         else:
-            logging.error("Invalid response received", response.status_code)
+            logging.error(f"Invalid response received {response.status_code}")
             sys.exit(1)
 
     start_day = datetime.date.today() - datetime.timedelta(days=DAYS_BACK)
