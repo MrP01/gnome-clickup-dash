@@ -1,8 +1,6 @@
-[tool.nitpick]
-style = [
-  "github://MrP01/lint-me-now/nitpick-base-style.toml",
-  "github://MrP01/lint-me-now/nitpick-python-style.toml"
-]
+[build-system]
+requires = ["poetry_core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
 name = "gnome-clickup-dash"
@@ -10,6 +8,12 @@ version = "0.0.1"
 description = "Tools to interact with ClickUp."
 authors = [
   "Peter Waldert <peter@waldert.at>"
+]
+
+[tool.nitpick]
+style = [
+  "github://MrP01/lint-me-now/nitpick-base-style.toml",
+  "github://MrP01/lint-me-now/nitpick-python-style.toml"
 ]
 
 [tool.poetry.dependencies]
@@ -31,3 +35,33 @@ lint = ["pylint"]
 
 [tool.black]
 line-length = 150
+
+[tool.isort]
+line_length = 150
+profile = "black"
+
+[tool.pylint]
+[tool.pylint.MASTER]
+jobs = 1
+extension-pkg-whitelist = "pydantic"
+
+[tool.pylint.REPORTS]
+output-format = "colorized"
+
+[tool.pylint.FORMAT]
+max-line-length = 150
+max-module-lines = 1000
+indent-after-paren = 4
+
+[tool.flakehell]
+ignore = "D107,D202,D203,D401,E203,E402,E501,W503"
+max_line_length = 150
+inline-quotes = "double"
+
+[tool.mypy]
+ignore_missing_imports = true
+follow_imports = "normal"
+strict_optional = true
+warn_no_return = true
+warn_redundant_casts = true
+warn_unused_ignores = false
