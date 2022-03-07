@@ -1,0 +1,33 @@
+[tool.nitpick]
+style = [
+  "github://MrP01/lint-me-now/nitpick-base-style.toml",
+  "github://MrP01/lint-me-now/nitpick-python-style.toml"
+]
+
+[tool.poetry]
+name = "gnome-clickup-dash"
+version = "0.0.1"
+description = "Tools to interact with ClickUp."
+authors = [
+  "Peter Waldert <peter@waldert.at>"
+]
+
+[tool.poetry.dependencies]
+python = "^3.7"
+requests = "^2.26.0"
+fastapi = "^0.70.1"
+uvicorn = "^0.16.0"
+motor = "^2.5.1"
+dnspython = "^2.1.0"
+invoke = "^1.6.0"
+pytz = "^2021.3"
+
+[tool.poetry.dependencies.pylint]
+version = "*"
+optional = true
+
+[tool.poetry.extras]
+lint = ["pylint"]
+
+[tool.black]
+line-length = 150
