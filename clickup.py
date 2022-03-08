@@ -82,6 +82,7 @@ def fetch():
         print("---")
         for task in due_tasks[:6]:
             print(f"{task['name'][:30]} | iconName=mail-forward-symbolic href={task['url']}")
+            print("--Complete this task | iconName=object-select-symbolic")
         if due > 6:
             print(f"... and {due - 6} more")
     if points_today > 0:
