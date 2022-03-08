@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 import datetime
 import json
+import logging
 import os
 import sys
-import logging
 
 import pytz
 import requests
@@ -27,7 +27,8 @@ def fetch():
     for workspace in config["workspaces"]:
         response = requests.get(
             f"https://api.clickup.com/api/v2/view/{workspace['still_due_view_id']}/task",
-            headers={"Authorization": config["api_token"]}, data={"page": 0}
+            headers={"Authorization": config["api_token"]},
+            data={"page": 0},
         )
         if response.ok:
             due_tasks.extend(response.json()["tasks"])
@@ -40,7 +41,10 @@ def fetch():
     response = requests.get(
         "https://clickup-task-aggregator.herokuapp.com/get-completed",
         headers={"Authorization": config["task_aggregator_api_token"]},
-        params={"start": (start_day_time + OFFSET_INTO_NEW_DAY).isoformat(), "end": datetime.datetime.utcnow().isoformat()}
+        params={
+            "start": (start_day_time + OFFSET_INTO_NEW_DAY).isoformat(),
+            "end": datetime.datetime.utcnow().isoformat(),
+        },
     )
     # print("... aggregated tasks", file=sys.stderr)
     assert response.ok
@@ -59,13 +63,21 @@ def fetch():
 
     clearfix = "<span color='blue'> </span>"
     green = "color='green'"
-    print(f"{clearfix}<span {green if points_today >= config['task_goal'] else ''}>{points_to_string(points_today)} / {config['task_goal']}</span>, "
-          f"<span color='orange'>due: {due}</span> :{emoji}: | iconName=object-select-symbolic")
+    print(
+        f"{clearfix}<span {green if points_today >= config['task_goal'] else ''}>{points_to_string(points_today)} / {config['task_goal']}</span>, "
+        f"<span color='orange'>due: {due}</span> :{emoji}: | iconName=object-select-symbolic"
+    )
     print("---")
-    print(f"{clearfix}<tt><b>" + " ".join(map(
-        lambda x: f"<span color='{'green' if x >= config['task_goal'] else 'orange'}'>{points_to_string(x)}</span>",
-        per_day
-    )) + "</b></tt>")
+    print(
+        f"{clearfix}<tt><b>"
+        + " ".join(
+            map(
+                lambda x: f"<span color='{'green' if x >= config['task_goal'] else 'orange'}'>{points_to_string(x)}</span>",
+                per_day,
+            )
+        )
+        + "</b></tt>"
+    )
     if due > 0:
         print("---")
         for task in due_tasks[:6]:
@@ -75,10 +87,13 @@ def fetch():
     if points_today > 0:
         print("---")
         for task in tasks_of_day[-1]:
-            print(f"{task.task_name[:30]} [{task.points}p] | iconName=object-select-symbolic href=https://app.clickup.com/t/{task.task_id}")
+            print(
+                f"{task.task_name[:30]} [{task.points}p] | iconName=object-select-symbolic "
+                "href=https://app.clickup.com/t/{task.task_id}"
+            )
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     try:
         fetch()
     except ConnectionError:
@@ -89,4 +104,3 @@ if __name__ == '__main__':
     print("---")
     print("Open Clickup | href=https://app.clickup.com/")
     print(f"Refresh (last: {datetime.datetime.now():%H:%M}) | refresh=true")
-

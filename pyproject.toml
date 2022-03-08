@@ -23,21 +23,25 @@ fastapi = "^0.70.1"
 uvicorn = "^0.16.0"
 motor = "^2.5.1"
 dnspython = "^2.1.0"
-invoke = "^1.6.0"
 pytz = "^2021.3"
-
 [tool.poetry.dependencies.pylint]
 version = "*"
 optional = true
 
-[tool.poetry.extras]
-lint = ["pylint"]
+[tool.poetry.dev-dependencies]
+invoke = "^1.6.0"
+black = "^22.1.0"
+isort = "^5.10.1"
+pylint = "^2.12.2"
+bandit = "^1.7.4"
+flakeheaven = "^0.11.1"
+mypy = "^0.931"
 
 [tool.black]
-line-length = 150
+line-length = 120
 
 [tool.isort]
-line_length = 150
+line_length = 120
 profile = "black"
 
 [tool.pylint]
@@ -49,13 +53,13 @@ extension-pkg-whitelist = "pydantic"
 output-format = "colorized"
 
 [tool.pylint.FORMAT]
-max-line-length = 150
+max-line-length = 120
 max-module-lines = 1000
 indent-after-paren = 4
 
-[tool.flakehell]
+[tool.flakeheaven]
 ignore = "D107,D202,D203,D401,E203,E402,E501,W503"
-max_line_length = 150
+max_line_length = 120
 inline-quotes = "double"
 
 [tool.mypy]

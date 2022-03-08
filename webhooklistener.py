@@ -2,7 +2,7 @@ import os
 
 import motor.motor_asyncio
 import requests
-from fastapi import FastAPI, Depends, HTTPException
+from fastapi import Depends, FastAPI, HTTPException
 from starlette.requests import Request
 
 from models import *
@@ -22,14 +22,17 @@ async def handleTaskStatusUpdate(update: WebhookUpdate):
                 print("Couldn't find the associated user.")
                 return {"message": "could not find user :("}
             if historyItem.after["type"] == "closed":
-                response = requests.get(f"https://api.clickup.com/api/v2/task/{update.task_id}/", headers={"Authorization": user.clickup_api_token})
+                response = requests.get(
+                    f"https://api.clickup.com/api/v2/task/{update.task_id}/",
+                    headers={"Authorization": user.clickup_api_token},
+                )
                 assert response.ok
                 taskDetail = response.json()
                 task = CompletedTaskLog(
                     timestamp=historyItem.get_datetime(),
                     task_id=update.task_id,
                     task_name=taskDetail["name"],
-                    username=user.username
+                    username=user.username,
                 )
                 try:
                     effortField = [cf for cf in taskDetail["custom_fields"] if cf["name"] == "Effort"][0]
@@ -52,8 +55,12 @@ async def get_current_user(request: Request) -> User:
 
 
 @app.get("/get-completed")
-async def getCompletedTasks(start: datetime.datetime, end: datetime.datetime, user: User = Depends(get_current_user)) -> list:
-    return [CompletedTaskLog.parse_obj(log) for log in await db.completedTasks.find({
-        "timestamp": {"$gte": start, "$lt": end},
-        "username": user.username
-    }).to_list(500)]
+async def getCompletedTasks(
+    start: datetime.datetime, end: datetime.datetime, user: User = Depends(get_current_user)
+) -> list:
+    return [
+        CompletedTaskLog.parse_obj(log)
+        for log in await db.completedTasks.find(
+            {"timestamp": {"$gte": start, "$lt": end}, "username": user.username}
+        ).to_list(500)
+    ]
