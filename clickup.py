@@ -81,8 +81,9 @@ def fetch():
     if due > 0:
         print("---")
         for task in due_tasks[:6]:
-            print(f"{task['name'][:30]} | iconName=mail-forward-symbolic href={task['url']}")
-            print("--Complete this task | iconName=object-select-symbolic")
+            print(f"{task['name'][:30]} | iconName=media-playback-start-symbolic")
+            print(f"--Open task on ClickUp | href={task['url']} iconName=applications-other-symbolic")
+            print(f"--Complete this task | iconName=object-select-symbolic bash='clickup close-task {task['id']}'")
         if due > 6:
             print(f"... and {due - 6} more")
     if points_today > 0:
