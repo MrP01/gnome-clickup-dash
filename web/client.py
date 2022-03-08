@@ -64,7 +64,7 @@ def fetch():
     return due_tasks, per_day, tasks_of_day
 
 
-def main():
+def construct_menu():
     due_tasks, per_day, tasks_of_day = fetch()
     points_today = per_day[-1]
     due = len(due_tasks)
@@ -99,9 +99,9 @@ def main():
             )
 
 
-if __name__ == "__main__":
+def main():
     try:
-        fetch()
+        construct_menu()
     except ConnectionError:
         print("No Network")
         logging.exception("Connection Error")
@@ -110,3 +110,7 @@ if __name__ == "__main__":
     print("---")
     print("Open Clickup | href=https://app.clickup.com/")
     print(f"Refresh (last: {datetime.datetime.now():%H:%M}) | refresh=true")
+
+
+if __name__ == "__main__":
+    main()
