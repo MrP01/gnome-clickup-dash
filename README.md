@@ -5,7 +5,8 @@
 Install Argos [here](https://extensions.gnome.org/extension/1176/argos/).
 
 This little project shows a summary of ClickUp workspaces' progress for a user.
-To configure it, please create `~/.config/gnome-clickup-dash/clickup.config.json` and fill it with the following content:
+To configure it, please create `~/.config/gnome-clickup-dash/clickup.config.json`
+and fill it with the following content:
 
 ```json
 {
