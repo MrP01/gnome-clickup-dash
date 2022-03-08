@@ -26,7 +26,9 @@ async def handleTaskStatusUpdate(update: WebhookUpdate):
                     f"https://api.clickup.com/api/v2/task/{update.task_id}/",
                     headers={"Authorization": user.clickup_api_token},
                 )
-                assert response.ok
+                if not response.ok:
+                    print("Invalid response received")
+                    return
                 taskDetail = response.json()
                 task = CompletedTaskLog(
                     timestamp=historyItem.get_datetime(),

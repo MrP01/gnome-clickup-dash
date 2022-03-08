@@ -3,14 +3,17 @@ import datetime
 import json
 import logging
 import os
+import pathlib
 import sys
+import tempfile
 
 import pytz
 import requests
 
 import models
 
-logging.basicConfig(filename="/tmp/gnome-clickup-dash.log", level=logging.DEBUG)
+tmp = pathlib.Path(tempfile.gettempdir())
+logging.basicConfig(filename=tmp / "gnome-clickup-dash.log", level=logging.DEBUG)
 logging.info("Starting")
 OFFSET_INTO_NEW_DAY = datetime.timedelta(hours=4, minutes=30)
 DAYS_BACK = 10
@@ -47,16 +50,22 @@ def fetch():
         },
     )
     # print("... aggregated tasks", file=sys.stderr)
-    assert response.ok
+    if not response.ok:
+        logging.error(f"Invalid response received {response.status_code}")
+        sys.exit(1)
     completed_tasks = response.json()
 
-    per_day = [0] * (DAYS_BACK + 1)
-    tasks_of_day = [list() for _ in range(DAYS_BACK + 1)]
+    per_day = [0.0] * (DAYS_BACK + 1)
+    tasks_of_day = [[] for _ in range(DAYS_BACK + 1)]
     for task in map(models.CompletedTaskLog.parse_obj, completed_tasks):
         delta = (task.timestamp.astimezone(pytz.utc) - OFFSET_INTO_NEW_DAY) - start_day_time
         per_day[delta.days] += task.points
         tasks_of_day[delta.days].append(task)
+    return due_tasks, per_day, tasks_of_day
 
+
+def main():
+    due_tasks, per_day, tasks_of_day = fetch()
     points_today = per_day[-1]
     due = len(due_tasks)
     emoji = "sunglasses" if points_today >= config["task_goal"] else "runner"
@@ -64,20 +73,15 @@ def fetch():
     clearfix = "<span color='blue'> </span>"
     green = "color='green'"
     print(
-        f"{clearfix}<span {green if points_today >= config['task_goal'] else ''}>{points_to_string(points_today)} / {config['task_goal']}</span>, "
+        f"{clearfix}<span {green if points_today >= config['task_goal'] else ''}>"
+        f"{points_to_string(points_today)} / {config['task_goal']}</span>, "
         f"<span color='orange'>due: {due}</span> :{emoji}: | iconName=object-select-symbolic"
     )
     print("---")
-    print(
-        f"{clearfix}<tt><b>"
-        + " ".join(
-            map(
-                lambda x: f"<span color='{'green' if x >= config['task_goal'] else 'orange'}'>{points_to_string(x)}</span>",
-                per_day,
-            )
-        )
-        + "</b></tt>"
-    )
+
+    fun = lambda x: f"<span color='{'green' if x >= config['task_goal'] else 'orange'}'>{points_to_string(x)}</span>"
+    title = " ".join(map(fun, per_day))
+    print(f"{clearfix}<tt><b>{title}</b></tt>")
     if due > 0:
         print("---")
         for task in due_tasks[:6]:

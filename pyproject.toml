@@ -33,6 +33,7 @@ pylint = "^2.12.2"
 bandit = "^1.7.4"
 flakeheaven = "^0.11.1"
 mypy = "^0.931"
+pyright = "^1.1.227"
 
 [tool.black]
 line-length = 120
@@ -54,15 +55,23 @@ max-line-length = 120
 max-module-lines = 1000
 indent-after-paren = 4
 
+[tool.pylint."MESSAGES CONTROL"]
+disable = [
+  "invalid-name",
+  "missing-module-docstring",
+  "missing-class-docstring",
+  "missing-function-docstring",
+  "unspecified-encoding",
+  "attribute-defined-outside-init",
+  "wildcard-import",
+  "unused-wildcard-import",
+  "too-few-public-methods",
+  "logging-fstring-interpolation"
+]
+
 [tool.flakeheaven]
 ignore = "D107,D202,D203,D401,E203,E402,E501,W503"
 max_line_length = 120
 inline-quotes = "double"
 
-[tool.mypy]
-ignore_missing_imports = true
-follow_imports = "normal"
-strict_optional = true
-warn_no_return = true
-warn_redundant_casts = true
-warn_unused_ignores = false
+[tool.pyright]

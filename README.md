@@ -1,4 +1,5 @@
 # Clickup Dashboard Extension
+
 ... for the Gnome Task Bar, using Argos - a BitBar-like customization tool for Gnome Extensions!
 
 Install Argos [here](https://extensions.gnome.org/extension/1176/argos/).
@@ -26,6 +27,7 @@ To configure it, please create `~/.config/gnome-clickup-dash/clickup.config.json
   "task_goal": 3
 }
 ```
+
 You can obtain the API token in your personal account settings ("-> Apps").
 
 For each workspace, define a completed_view, which essentially filters for all the tasks you've done, say, today.
@@ -34,6 +36,7 @@ Similarly, introduce a still_due_view, that filters for all the tasks that are s
 Define a personal `task_goal` for you to complete every day (or whatever time period you're using).
 
 ## Webhook Listener
+
 In order to make use of webhooks, please run the FastAPI webhook listener somewhere on your public server.
 
 `uvicorn webhooklistener:app --reload`
