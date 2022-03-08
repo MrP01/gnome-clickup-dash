@@ -10,7 +10,7 @@ import tempfile
 import pytz
 import requests
 
-import models
+from . import models
 
 tmp = pathlib.Path(tempfile.gettempdir())
 logging.basicConfig(filename=tmp / "gnome-clickup-dash.log", level=logging.DEBUG)

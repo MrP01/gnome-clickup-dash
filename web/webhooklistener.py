@@ -5,7 +5,7 @@ import requests
 from fastapi import Depends, FastAPI, HTTPException
 from starlette.requests import Request
 
-from models import *
+from .models import *
 
 app = FastAPI()
 client = motor.motor_asyncio.AsyncIOMotorClient(os.environ["MONGO_URL"])
