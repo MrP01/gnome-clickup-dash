@@ -79,15 +79,22 @@ def construct_menu():
     )
     print("---")
 
-    fun = lambda x: f"<span color='{'green' if x >= config['task_goal'] else 'orange'}'>{points_to_string(x)}</span>"
-    title = " ".join(map(fun, per_day))
+    title = " ".join(
+        map(
+            lambda x: f"<span color='{'green' if x >= config['task_goal'] else 'orange'}'>{points_to_string(x)}</span>",
+            per_day,
+        )
+    )
     print(f"{clearfix}<tt><b>{title}</b></tt>")
     if due > 0:
         print("---")
         for task in due_tasks[:6]:
             print(f"{task['name'][:30]} | iconName=media-playback-start-symbolic")
             print(f"--Open task on ClickUp | href={task['url']} iconName=applications-other-symbolic")
-            print(f"--Complete this task | iconName=object-select-symbolic bash='clickup close-task {task['id']}'")
+            print(
+                "--Complete this task | iconName=object-select-symbolic bash"
+                f"='/home/peter/bin/clickup close-task {task['id']}'"
+            )
         if due > 6:
             print(f"... and {due - 6} more")
     if points_today > 0:

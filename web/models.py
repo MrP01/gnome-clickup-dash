@@ -1,7 +1,7 @@
 import datetime
 from typing import List, Optional
 
-from bson import ObjectId
+from bson.objectid import ObjectId
 from pydantic import BaseModel, Field
 
 
