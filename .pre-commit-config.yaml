@@ -60,7 +60,7 @@ repos:
     hooks:
       - id: debug-statements
   - repo: https://github.com/asottile/pyupgrade
-    rev: v2.34.0
+    rev: v2.37.3
     hooks:
       - id: pyupgrade
         args:
@@ -85,7 +85,7 @@ repos:
           - --remove-duplicate-keys
           - --ignore-init-module-imports
   - repo: https://github.com/flakeheaven/flakeheaven
-    rev: 2.0.0
+    rev: 3.0.0
     hooks:
       - id: flakeheaven
         additional_dependencies:

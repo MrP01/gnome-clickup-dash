@@ -12,23 +12,23 @@ authors = ["Peter Waldert <peter@waldert.at>"]
 style = ["github://MrP01/lint-me-now/nitpick-base-style.toml", "github://MrP01/lint-me-now/nitpick-python-style.toml"]
 
 [tool.poetry.dependencies]
-python = "^3.7"
+python = ">=3.7.2,<4.0"
 requests = "^2.28.1"
-fastapi = "^0.78.0"
+fastapi = "^0.79.0"
 uvicorn = "^0.18.2"
 motor = "^3.0.0"
 dnspython = "^2.2.1"
 pytz = "^2022.1"
 
 [tool.poetry.group.dev.dependencies]
-invoke = "^1.6.0"
-black = "^22.1.0"
+invoke = "^1.7.1"
+black = "^22.6.0"
 isort = "^5.10.1"
-pylint = "^2.12.2"
+pylint = "^2.14.5"
 bandit = "^1.7.4"
-flakeheaven = "^0.11.1"
-mypy = "^0.931"
-pyright = "^1.1.227"
+flakeheaven = "^3.0.0"
+mypy = "^0.971"
+pyright = "^1.1.265"
 
 [tool.black]
 line-length = 120
