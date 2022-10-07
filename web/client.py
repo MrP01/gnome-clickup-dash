@@ -7,6 +7,7 @@ import pathlib
 import sys
 import tempfile
 
+import caldav
 import pytz
 import requests
 
@@ -117,6 +118,52 @@ def main():
     print("---")
     print("Open Clickup | href=https://app.clickup.com/")
     print(f"Refresh (last: {datetime.datetime.now():%H:%M}) | refresh=true")
+
+
+cli = caldav.DAVClient("https://waldcloud.hopto.org:2023/dav/peter/calendars/", username="leser", password="p1140")
+principal = cli.principal()
+# principal.calendar_home_set
+
+
+def get_list_tasks(list_id):
+    page = 0
+    response = requests.get(
+        f"https://api.clickup.com/api/v2/list/{list_id}/task",
+        headers={"Authorization": config["api_token"]},
+        data={"page": page},
+    ).json()
+    return response["tasks"]
+
+
+def export_list_to_caldav(list_id, name):
+    calendar = principal.calendar_home_set.make_calendar(name)
+    for task in get_list_tasks(list_id):
+        kwargs = {}
+        if task["due_date"]:
+            kwargs["due"] = datetime.datetime.fromtimestamp(int(task["due_date"]) / 1000).date()
+        response = calendar.add_todo(summary=task["name"], **kwargs)
+        print(f"Created {task['name']} due on {kwargs.get('due')}")
+
+
+def export_all(space_id=10931387):
+    for list in requests.get(
+        f"https://api.clickup.com/api/v2/space/{space_id}/list",
+        headers={"Authorization": config["api_token"]},
+    ).json()["lists"]:
+        print(list["id"], list["name"])
+        export_list_to_caldav(list["id"], list["name"])
+
+    for folder in requests.get(
+        f"https://api.clickup.com/api/v2/space/{space_id}/folder",
+        headers={"Authorization": config["api_token"]},
+    ).json()["folders"]:
+        print(folder["name"])
+        for list in requests.get(
+            f"https://api.clickup.com/api/v2/folder/{folder['id']}/list",
+            headers={"Authorization": config["api_token"]},
+        ).json()["lists"]:
+            print(list["id"], folder["name"] + "." + list["name"])
+            export_list_to_caldav(list["id"], folder["name"] + "." + list["name"])
 
 
 if __name__ == "__main__":
